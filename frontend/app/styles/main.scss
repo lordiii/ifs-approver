@@ -1,0 +1,107 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+// bower:scss
+@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+// endbower
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* Space out content a bit */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Custom page header */
+.header {
+  border-bottom: 1px solid #e5e5e5;
+
+  /* Make the masthead heading the same height as the navigation */
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 40px;
+    padding-bottom: 19px;
+  }
+}
+
+/* Custom page footer */
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+}
+
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+.image-list {
+
+  .image-info {
+    cursor: pointer;
+  }
+
+  .image-preview {
+    text-align: center;
+    position: relative; // for the marker
+  }
+
+  .controls {
+    padding-top: 5px;
+  }
+
+  .markers-container {
+    position: relative;
+
+    .markers {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+}
+
+.animate.ng-enter {
+  transition:0.5s ease-in all;
+  opacity: 0;
+}
+.animate.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+.animate.ng-leave {
+  transition:0.2s ease-out all;
+}
+.animate.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+
+  /* Remove the padding we set earlier */
+  .header,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
