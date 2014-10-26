@@ -109,6 +109,9 @@ Setup the configurations
 # TODO
 
 * More mails
+    * notify other admins
+    * include pending images in mail
+    * User error mail
 * Use https
 * Cleanup for broken/missing images
 

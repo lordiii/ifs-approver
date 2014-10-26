@@ -2,10 +2,10 @@ import os
 import re
 import subprocess
 from os import path
-import sys
 import shutil
 
 from ifsApprover import db, Log, config
+from ifsApprover.Mail import send_approve_mail, send_reject_mail
 
 
 RE_IFS_JPG = re.compile("^([\d]{4})\.jpg")
@@ -14,15 +14,19 @@ logger = Log.get_logger("ImageActions")
 
 
 def approve_image(image_id, user_login):
-    logger.info("Approve image %s." % image_id)
+    logger.info("Approve image %s by %s." % (image_id, user_login))
     db.approve_image(image_id, user_login)
-    image_filename = db.get_image_filename(image_id)
-    _move_image_to_approve_dir(image_filename)
+    image_data = db.get_single_image(image_id)
+    _move_image_to_approve_dir(image_data["filename"])
     _run_after_approve()
+    send_approve_mail(ifs_image_owner=image_data["sender"], image_filename=image_data["filename"], user_login=user_login)
 
 
-def reject_image(image_id, user_login):
-    db.reject_image(image_id, user_login)
+def reject_image(image_id, user_login, reason):
+    logger.info("Reject image %s by %s." % (image_id, user_login))
+    db.reject_image(image_id, user_login, reason)
+    image_data = db.get_single_image(image_id)
+    send_reject_mail(ifs_image_owner=image_data["sender"], image_filename=image_data["filename"], reject_reason=reason, user_login=user_login)
 
 
 def _move_image_to_approve_dir(image_filename):

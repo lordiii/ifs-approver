@@ -4,6 +4,6 @@
 
     <error-box error-msg="ui.error"></error-box>
 
-    <mail-list on-approve="approve($image)" on-reject="reject($image)" on-error="ui.error = $error" disable-actions="disable"></mail-list>
+    <mail-list on-approve="approve($image)" on-reject="reject($image, $reason)" on-error="ui.error = $error" disable-actions="disable"></mail-list>
 
 </div>

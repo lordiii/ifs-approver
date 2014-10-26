@@ -22,12 +22,17 @@
     <tr ng-if="img.showImage" class="animate" ng-class="{'success': img.approved, 'danger': img.rejected}">
         <td colspan="4" class="image-preview">
             <div class="long-description visible-xs-inline"><code>{{img.description}}</code></div>
-            <div class="changed-by" ng-if="img.changed_by_name">Approved/Rejected by: {{img.changed_by_name}}</div>
+            <div class="changed-by" ng-if="img.changed_by_name"><strong>Approved/Rejected by: </strong> {{img.changed_by_name}}</div>
+            <div class="change-reason" ng-if="img.rejected"><strong>Reason: </strong> {{img.action_reason}}</div>
             <img class="img-thumbnail" ng-src="{{img.previewUrl}}" title="{{img.filename}}" ng-if="showThumbnails"/>
 
-            <div class="controls" ng-if="!img.approved && !img.rejected && enableActions">
-                <button type="button" class="btn btn-danger" ng-click="onReject({'$image':img})" disable-for="off">Reject image</button>
-                <button type="button" class="btn btn-success" ng-click="onApprove({'$image':img})" disable-for="off">Approve image</button>
+            <div class="controls row" ng-if="!img.approved && !img.rejected && enableActions">
+                <div class="col-xs-6 text-right">
+                    <button-with-comment style-class="btn btn-danger" label="Reason: " action="onReject({'$image':img, '$reason': $comment})">Reject image</button-with-comment>
+                </div>
+                <div class="col-xs-6 text-left">
+                    <button type="button" class="btn btn-success" ng-click="onApprove({'$image':img})" disable-for="off">Approve image</button>
+                </div>
             </div>
         </td>
     </tr>

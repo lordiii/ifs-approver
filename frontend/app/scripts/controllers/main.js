@@ -30,8 +30,8 @@ angular.module('frontendApp').controller('MainCtrl', function ($scope, Imageserv
       });
   };
 
-  $scope.reject = function (image) {
-    Imageservice.rejectImage(image.id).then(
+  $scope.reject = function (image, reason) {
+    Imageservice.rejectImage(image.id, reason).then(
       function ok() {
         image.rejected = true;
         image.showImage = false;

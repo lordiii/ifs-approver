@@ -39,7 +39,7 @@ def list_users():
 
 def list_images():
     print "# Images:"
-    for entry in db.get_images():
+    for entry in db.get_pending_images():
         print entry
 
     missing = db.get_missing_images()

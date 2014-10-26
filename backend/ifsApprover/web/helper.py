@@ -50,13 +50,11 @@ def make_json_response(data={}, status="ok"):
 
 
 # some parts from http://flask.pocoo.org/snippets/56/
-def crossdomain(methods=None, headers=None,
+def crossdomain(methods=None,
                 attach_to_all=True,
                 automatic_options=True):
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
-    if headers is not None and not isinstance(headers, basestring):
-        headers = ', '.join(x.upper() for x in headers)
 
     def get_methods():
         if methods is not None:
@@ -78,8 +76,9 @@ def crossdomain(methods=None, headers=None,
             h['Access-Control-Allow-Credentials'] = "true"
             h['Access-Control-Allow-Origin'] = request.headers.get("Origin", "*")
             h['Access-Control-Allow-Methods'] = get_methods()
-            if headers is not None:
-                h['Access-Control-Allow-Headers'] = headers
+            # allow every header that was requested
+            if "Access-Control-Request-Headers" in request.headers:
+                h['Access-Control-Allow-Headers'] = request.headers["Access-Control-Request-Headers"]
             return resp
 
         f.provide_automatic_options = False

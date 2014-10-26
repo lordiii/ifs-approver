@@ -23,10 +23,24 @@ angular.module('frontendApp').service('Imageservice', function Imageservice($log
     return data;
   }
 
-  function imageRequest(status, imageId) {
-    return $http.put(Config.baseUrl + '/images/' + imageId, {
-      status: status
-    }).then(
+  /**
+   *
+   * @param status
+   * @param imageId
+   * @param [reason]
+   * @returns {*}
+   */
+  function imageRequest(status, imageId, reason) {
+    var config = {
+      url: Config.baseUrl + '/images/' + imageId,
+      method: 'PUT',
+      data: {
+        status: status,
+        reason: reason
+      },
+      withCredentials: true
+    };
+    return $http(config).then(
       function ok(response) {
         if (response.data.status !== 'ok') {
           return $q.reject('Request error: ' + response.data.status || 'unknown');
@@ -86,8 +100,8 @@ angular.module('frontendApp').service('Imageservice', function Imageservice($log
     return imageRequest(STATUS.APPROVED, imageId);
   };
 
-  this.rejectImage = function (imageId) {
-    return imageRequest(STATUS.REJECTED, imageId);
+  this.rejectImage = function (imageId, reason) {
+    return imageRequest(STATUS.REJECTED, imageId, reason);
   };
 
 });

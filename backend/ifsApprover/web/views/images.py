@@ -12,12 +12,12 @@ images = Blueprint("images", __name__)
 
 
 @images.route("/")
-@crossdomain(headers="authorization")
+@crossdomain()
 @requires_auth
 def list_images():
     filter = request.args.get('filter')
     if filter is None or filter == "":
-        images = db.get_images()
+        images = db.get_pending_images()
     elif filter == "missing":
         images = db.get_missing_images()
     elif filter == "processed":
@@ -32,7 +32,7 @@ def list_images():
     return make_json_response(view_list)
 
 
-@images.route("/<int:image_id>", methods=["PUT"])
+@images.route("/<int:image_id>", methods=["PUT", "OPTIONS"])
 @crossdomain()
 @requires_auth
 def update_image(image_id):
@@ -40,7 +40,10 @@ def update_image(image_id):
     if status == DB.STATUS_APPROVED:
         approve_image(image_id, request.authorization.username)
     elif status == DB.STATUS_REJECTED:
-        reject_image(image_id, request.authorization.username)
+        reason = request.json.get("reason")
+        if reason is None:
+            reason = "~ unknown ~"
+        reject_image(image_id, request.authorization.username, reason)
     else:
         return make_json_response(status="Error: Invalid 'status' value.")
 

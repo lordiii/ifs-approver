@@ -8,6 +8,6 @@
  * Constant in the frontendApp.
  */
 angular.module('frontendApp').constant('Config', {
-  baseUrl: ''
-//  baseUrl: 'http://localhost:5000'
+//  baseUrl: ''
+  baseUrl: 'http://localhost:5000'
 });
