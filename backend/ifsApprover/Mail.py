@@ -94,7 +94,7 @@ def _send_other_admin_notification(action, ifs_image_owner, image_filename, user
     admins = db.get_users_list()
     other_admins = []
     for user in admins:
-        if user["login"] == user_login or db.is_system_user(user):
+        if user["login"] == user_login.lower() or db.is_system_user(user):
             continue
         other_admins.append(user["login"])
 
