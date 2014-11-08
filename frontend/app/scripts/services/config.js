@@ -8,6 +8,5 @@
  * Constant in the frontendApp.
  */
 angular.module('frontendApp').constant('Config', {
-//  baseUrl: ''
-  baseUrl: 'http://localhost:5000'
+  baseUrl: '@@STATUS' === 'dev' ? 'http://localhost:5000' : ''
 });

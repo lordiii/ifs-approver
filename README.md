@@ -109,9 +109,7 @@ Setup the configurations
 # TODO
 
 * More mails
-    * notify other admins
-    * include pending images in mail
     * User error mail
-* Use https
+* Check responsive for 1280 width
 * Cleanup for broken/missing images
 
