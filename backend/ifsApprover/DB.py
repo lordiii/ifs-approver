@@ -99,15 +99,15 @@ class DB():
         self._insert_images(sender, description, self.STATUS_NO_IMAGE)
 
     def get_pending_images(self):
-        self._cursor.execute("SELECT * FROM images where status = ? ORDER BY date", [self.STATUS_OK])
+        self._cursor.execute("SELECT * FROM images where status = ? ORDER BY date desc", [self.STATUS_OK])
         return self._cursor.fetchall()
 
     def get_pending_images_count(self):
-        self._cursor.execute("SELECT count(*) FROM images where status = ? ORDER BY date", [self.STATUS_OK])
+        self._cursor.execute("SELECT count(*) FROM images where status = ?", [self.STATUS_OK])
         return self._cursor.fetchone()[0]
 
     def get_missing_images(self):
-        self._cursor.execute("SELECT * FROM images where status = ? ORDER BY date", [self.STATUS_NO_IMAGE])
+        self._cursor.execute("SELECT * FROM images where status = ? ORDER BY date desc", [self.STATUS_NO_IMAGE])
         return self._cursor.fetchall()
 
     def get_processed_images(self):
@@ -116,7 +116,7 @@ class DB():
         :return:
         """
         self._cursor.execute(
-            "SELECT i.*, u.login AS changed_by_name FROM images i, users u where u.id = i.changed_by AND status in(?, ?) ORDER BY date",
+            "SELECT i.*, u.login AS changed_by_name FROM images i, users u where u.id = i.changed_by AND status in(?, ?) ORDER BY date desc",
             [self.STATUS_REJECTED, self.STATUS_APPROVED])
         return self._cursor.fetchall()
 
