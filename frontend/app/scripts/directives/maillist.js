@@ -50,7 +50,10 @@ angular.module('frontendApp').directive('mailList', function (Imageservice, Conf
           scope.images = data;
           scope.images.forEach(function (image) {
             patchEmail(image);
-            image.previewUrl = Config.baseUrl + '/previews/preview_' + image.filename;
+            image.previewUrl = Config.baseUrl + '/images/' + image.id + '/preview';
+            if (image.status === Imageservice.STATUS.OK || image.status === Imageservice.STATUS.REJECTED) {
+              image.fullUrl = Config.baseUrl + '/images/' + image.id + '/full';
+            }
             addStatus(image);
           });
         }, function error(errData) {

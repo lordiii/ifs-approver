@@ -1,7 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
+from werkzeug.exceptions import NotFound
 
-from ifsApprover.ImageActions import approve_image, reject_image
-
+from ifsApprover.ImageActions import approve_image, reject_image, get_image_path
 from ifsApprover.web.helper import requires_auth, copy_fields, make_json_response, crossdomain
 from ifsApprover import db, DB
 
@@ -30,6 +30,26 @@ def list_images():
         view_list.append(copy_fields(img_entry, img_entry.keys()))
 
     return make_json_response(view_list)
+
+
+@images.route('/<int:image_id>/preview')
+@crossdomain()
+@requires_auth
+def serve_preview(image_id):
+    path = get_image_path(image_id, 'preview')
+    if path is None:
+        raise NotFound()
+    return send_file(path)
+
+
+@images.route('/<int:image_id>/full')
+@crossdomain()
+@requires_auth
+def serve_full(image_id):
+    path = get_image_path(image_id)
+    if path is None:
+        raise NotFound()
+    return send_file(path)
 
 
 @images.route("/<int:image_id>", methods=["PUT", "OPTIONS"])

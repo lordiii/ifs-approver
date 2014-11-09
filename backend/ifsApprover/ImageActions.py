@@ -29,6 +29,27 @@ def reject_image(image_id, user_login, reason):
     send_reject_mail(ifs_image_owner=image_data["sender"], image_filename=image_data["filename"], reject_reason=reason, user_login=user_login)
 
 
+def get_image_path(image_id, type='full'):
+    image = db.get_single_image(image_id)
+    if image is None:
+        logger.warn("No image found for id %s" % image_id)
+        return None
+    if type == "preview":
+        return path.join(config["IMAGE_DIR"], "preview_" + image["filename"])
+    elif type == "full":
+        status = image["status"]
+        if status == db.STATUS_OK or status == db.STATUS_REJECTED:
+            image_file = path.join(config["IMAGE_DIR"], image["filename"])
+        else:
+            return None
+        if not path.exists(image_file):
+            logger.warn("Expected image at '%s', but not found. Id: %s, type: %s" % (image_file, image_id, type))
+            return None
+        return image_file
+    else:
+        raise StandardError("Invalid 'type' %s" % type)
+
+
 def _move_image_to_approve_dir(image_filename):
     filename_with_path = path.join(config["IMAGE_DIR"], image_filename)
     target_folder = config["APPROVED_IMAGE_DIR"]

@@ -24,7 +24,11 @@
             <div class="long-description visible-xs-inline"><code>{{img.description}}</code></div>
             <div class="changed-by" ng-if="img.changed_by_name"><strong>Approved/Rejected by: </strong> {{img.changed_by_name}}</div>
             <div class="change-reason" ng-if="img.rejected"><strong>Reason: </strong> {{img.action_reason}}</div>
-            <img class="img-thumbnail" ng-src="{{img.previewUrl}}" title="{{img.filename}}" ng-if="showThumbnails"/>
+
+            <a ng-href="{{img.fullUrl}}" ng-if="showThumbnails && img.fullUrl" title="Show full image of {{img.filename}}">
+                <img class="img-thumbnail" ng-src="{{img.previewUrl}}" />
+            </a>
+            <img class="img-thumbnail" ng-src="{{img.previewUrl}}" title="{{img.filename}}" ng-if="showThumbnails && !img.fullUrl"/>
 
             <div class="controls row" ng-if="!img.approved && !img.rejected && enableActions">
                 <div class="col-xs-6 text-right">
