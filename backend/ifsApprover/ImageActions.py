@@ -1,11 +1,11 @@
 import os
 import re
-import subprocess
 from os import path
 import shutil
 
 from ifsApprover import db, Log, config
 from ifsApprover.Mail import send_approve_mail, send_reject_mail
+from Utils import run
 
 
 RE_IFS_JPG = re.compile("^([\d]{4})\.jpg")
@@ -27,6 +27,34 @@ def reject_image(image_id, user_login, reason):
     db.reject_image(image_id, user_login, reason)
     image_data = db.get_single_image(image_id)
     send_reject_mail(ifs_image_owner=image_data["sender"], image_filename=image_data["filename"], reject_reason=reason, user_login=user_login)
+
+
+def create_image_preview(image_filename):
+    """
+    Creates a preview image (size from config) for the given image name. It uses the configured image directory.
+    :param image_filename: only the image filename, without any path!
+    :return: the size (width, height) of the original image
+    """
+    logger.debug("Create image preview.")
+
+    image_full_path = path.join(config["IMAGE_DIR"], image_filename)
+    preview_full_path = path.join(config["IMAGE_DIR"], "preview_%s" % image_filename)
+
+    # read size
+    cmd = "identify -format \"%%w,%%h\" %s" % image_full_path
+    logger.debug("run: %s" % cmd)
+    out = run(cmd, "identify")
+    if "," not in out:
+        raise StandardError("Error getting size of %s. (identify output: '%s')" % (image_full_path, out))
+    size = out.split(",")
+
+    size_for_convert = "x".join(map(str, config["IMAGE_PREVIEW_SIZE"]))
+    cmd = "%s %s -resize %s -auto-orient %s" % \
+          (config["IMAGEMAGICK_CONVERT"], image_full_path, size_for_convert, preview_full_path)
+    logger.debug("run: %s" % cmd)
+    run(cmd, "convert")
+
+    return size
 
 
 def get_image_path(image_id, type='full'):
@@ -69,9 +97,5 @@ def _move_image_to_approve_dir(image_filename):
 def _run_after_approve():
     cmd = config["APPROVED_AFTER_ACTION"]
     logger.info("running APPROVED_AFTER_ACTION: %s" % cmd)
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    out = p.stdout.read().rstrip()
-    return_code = p.wait()
-    if return_code != 0:
-        raise StandardError("APPROVED_AFTER_ACTION failed. Log: \n%s" % out)
+    out = run(cmd, "APPROVED_AFTER_ACTION")
     logger.debug(out)

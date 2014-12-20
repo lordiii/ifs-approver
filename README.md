@@ -110,6 +110,5 @@ Setup the configurations
 
 * More mails
     * User error mail
-* Check responsive for 1280 width
 * Cleanup for broken/missing images
 

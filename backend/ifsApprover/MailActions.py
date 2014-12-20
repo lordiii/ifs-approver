@@ -2,8 +2,6 @@ import sys
 import time
 from os import path
 
-from PIL import Image
-
 from ifsApprover import db, config
 from ifsApprover.Log import get_logger
 from ifsApprover.Utils import make_dirs_if_needed, rnd_string
@@ -74,24 +72,6 @@ def extract_and_store_image(mail, image_filename_full):
 
     return True
 
-
-def create_image_preview(image_filename):
-    """
-    Creates a preview image (size from config) for the given image name. It uses the configured image directory.
-    :param image_filename: only the image filename, without any path!
-    :return: the size (width, height) of the original image
-    """
-    logger.debug("Create image preview.")
-
-    image_full_path = path.join(config["IMAGE_DIR"], image_filename)
-    preview_full_path = path.join(config["IMAGE_DIR"], "preview_%s" % image_filename)
-
-    im = Image.open(image_full_path)
-    # get the size here, BEFORE we resize this image instance
-    size = im.size
-    im.thumbnail(config["IMAGE_PREVIEW_SIZE"], Image.ANTIALIAS)
-    im.save(preview_full_path, "JPEG")
-    return size
 
 
 def make_db_entry(mail, image_file_name=None, image_size=None):

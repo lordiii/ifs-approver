@@ -5,9 +5,10 @@ from os import path
 from flask import Blueprint, request
 
 from ifsApprover import config
+from ifsApprover.ImageActions import create_image_preview
 from ifsApprover.Log import get_logger
 from ifsApprover.Mail import send_new_image_mail
-from ifsApprover.MailActions import make_unique_prefix, extract_and_store_image, make_db_entry, create_image_preview
+from ifsApprover.MailActions import make_unique_prefix, extract_and_store_image, make_db_entry
 from ifsApprover.Utils import make_dirs_if_needed
 from ifsApprover.web.helper import crossdomain
 

@@ -20,8 +20,10 @@ IMAGE_DIR = join(_project_base_dir, "output", "images")
 SERVE_STATIC_FRONTEND = True
 STATIC_FRONTEND_DIR = join(_base_dir, "static-frontend")
 
+# images
 # (width, height) - in px
 IMAGE_PREVIEW_SIZE = (500, 500)
+IMAGEMAGICK_CONVERT = "/usr/bin/convert"
 
 #
 APPROVED_IMAGE_DIR = "/tmp/your_path"
