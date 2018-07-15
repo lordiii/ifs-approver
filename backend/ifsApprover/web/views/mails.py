@@ -23,7 +23,7 @@ mails = Blueprint("mails", __name__)
 def new_mail():
     try:
         if not client_allowed():
-            return "Client addres not allowd."
+            return "Client address not allowed."
 
         raw_mail_str = request.values["mail"]
 

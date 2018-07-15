@@ -41,12 +41,15 @@ def create_image_preview(image_filename):
     preview_full_path = path.join(config["IMAGE_DIR"], "preview_%s" % image_filename)
 
     # read size
-    cmd = "identify -format \"%%w,%%h\" %s" % image_full_path
+    # http://www.imagemagick.org/script/escape.php
+    cmd = "%s -format \"%%m,%%w,%%h\" %s" % (config["IMAGEMAGICK_IDENTIFY"], image_full_path)
     logger.debug("run: %s" % cmd)
     out = run(cmd, "identify")
     if "," not in out:
         raise StandardError("Error getting size of %s. (identify output: '%s')" % (image_full_path, out))
-    size = out.split(",")
+    image_info = out.split(",")
+    if image_info[0] is not "JPEG":
+        raise StandardError("Image was not a JPEG, but '%s'. (identify output: '%s')", (image_info[0], image_info))
 
     size_for_convert = "x".join(map(str, config["IMAGE_PREVIEW_SIZE"]))
     cmd = "%s %s -resize %s -auto-orient %s" % \
@@ -54,7 +57,10 @@ def create_image_preview(image_filename):
     logger.debug("run: %s" % cmd)
     run(cmd, "convert")
 
-    return size
+    # removes the image type, only with/height remains
+    image_info.pop(0)
+
+    return image_info
 
 
 def get_image_path(image_id, type='full'):
