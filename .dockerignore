@@ -1,0 +1,9 @@
+venv
+frontend
+log
+output
+test-data
+log
+*.pyc
+.idea
+.git

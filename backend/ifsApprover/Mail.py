@@ -1,13 +1,11 @@
 # -*- coding: utf8 -*-
-
 from string import Template
 
 from flask_mail import Mail, Message
 
+from ifsApprover import db, config
 from ifsApprover.Log import get_logger
 from ifsApprover.web import app
-from ifsApprover import db, config
-
 
 #
 # mail templates
@@ -64,7 +62,7 @@ logger = get_logger("mail")
 
 
 def send_new_image_mail(ifs_image_owner):
-    login_list = map(lambda entry: entry["login"], db.get_users_list())
+    login_list = list(map(lambda entry: entry["login"], db.get_users_list()))
     image_pending = db.get_pending_images_count()
 
     subject = Template(NEW_IMAGE_MAIL[0]).substitute(amount=image_pending)
@@ -118,5 +116,6 @@ def _send(recipients, subject, body):
     msg.body = body
     with app.app_context():
         if config["MAIL_SUPPRESS_SEND"] is True:
-            logger.debug("Mail:\n%s" % msg)
-        mail.send(msg)
+            logger.debug(f"Mail (not sent):\n{msg}")
+        else:
+            mail.send(msg)

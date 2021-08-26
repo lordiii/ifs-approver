@@ -1,11 +1,9 @@
 import sys
 import time
-from os import path
 
-from ifsApprover import db, config
+from ifsApprover import db
 from ifsApprover.Log import get_logger
 from ifsApprover.Utils import make_dirs_if_needed, rnd_string
-
 
 logger = get_logger("MailActions")
 
@@ -42,10 +40,10 @@ def receive_and_store_mail(filename):
 
     with open(filename, "wb") as fo:
         for line in sys.stdin:
-            fo.write(line)
+            fo.write(line.encode())
             mail_data.append(line)
 
-    logger.debug("Mail stored: %s" % filename)
+    logger.debug(f"Mail stored: {filename}")
 
     # the lines have already a line break
     return "".join(mail_data)

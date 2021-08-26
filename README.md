@@ -1,18 +1,18 @@
 # ifs-approver
 
-The workfow for this tool:
+The workflow for this tool:
 
 1.  Someone makes a nice image for the "image from space" category
-1.  Mails the image to a special address
-1.  Parse the email and sends a notification to reviewer
-1.  The reviewer approves or disapproves the image
+2.  Mails the image to a special address
+3.  Parse the email and sends a notification to reviewer
+4.  The reviewer approves or disapproves the image
 
 # Setup
 
-## Server setup
-
 Our setup, your setup may vary.
- 
+
+## mail
+
 Receive emails and run a python script. 
 
     # /etc/postfix/master.cf
@@ -26,6 +26,11 @@ Receive emails and run a python script.
     
 Don't forget to change the ```url``` value in the url ```/path/to/script/ifsMailNode.py``` script.
 
+## app
+
+```shell
+apt-get install nginx python3-venv python3-pip python3-wheel uwsgi uwsgi-plugin-python3 imagemagick
+```
 
 Setup the server running the python backend (and the JS frontend). We use a nginx backend.
 
@@ -47,59 +52,48 @@ Setup the server running the python backend (and the JS frontend). We use a ngin
 
 nginx uses uwsgi to serve the python backend. We use 'album' as user. 
     
-    apt-get install uwsgi-plugin-python
-    
 The config    
-    
-    # /etc/uwsgi/apps-enabled
-    [uwsgi]
-    plugin          = python
-    no-site         = True
-    pythonpath      = /usr/lib/python2.7/dist-packages
-    pythonpath      = /usr/local/lib/python2.7/dist-packages
-    chdir           = /home/album/ifs-approver/backend
-    wsgi-file       = /home/album/ifs-approver/backend/cgi/ifs-approver.wsgi.py
-    
-    uid = album
-    gid = album
-    
-    callable = app
-    
-    # process-related settings
-    # master
-    master          = true
-    # maximum number of worker processes
-    processes       = 2
-    # the socket (use the full path to be safe
-    socket = /run/uwsgi/app/ifs/socket
+```ini
+[uwsgi]
+plugin          = python3
+virtualenv      = /home/album/ifs-approver/backend/venv
+pythonpath      = /home/album/ifs-approver/backend/venv
 
-Reload
-    
-    service nginx reload
-    service uwsgi reload
-    
-## Programm setup
+chdir           = /home/album/ifs-approver/backend
+wsgi-file       = /home/album/ifs-approver/backend/cgi/ifs-approver.wsgi.py
 
-Install requirements
-    
-    apt-get install python-pip python-imaging
-    apt-get install node-js
-    # todo.... install npm, bower
+uid = album
+gid = album
+
+callable = app
+
+# process-related settings
+# master
+master          = true
+# maximum number of worker processes
+processes       = 2
+# the socket (use the full path to be safe
+socket = /run/uwsgi/app/ifs/socket
+chown-socket = www-data:www-data
+chmod-socket = 664
+```
 
 Make/prepare the app
 
-    git clone https://github.com/ktt-ol/ifs-approver.git
-    cd ifs-approver
-    
-    # make frontend
-    cd frontend
-    npm install
-    bower install
-    grunt build
+```shell
+git clone https://github.com/ktt-ol/ifs-approver.git
+cd ifs-approver
 
-    # make the backend
-    cd ../backend
-    pip install -r requirements.txt
+# make frontend
+cd frontend
+npm ci
+npm run build
+
+# make the backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 Setup the configurations
 
@@ -111,4 +105,3 @@ Setup the configurations
 * More mails
     * User error mail
 * Cleanup for broken/missing images
-

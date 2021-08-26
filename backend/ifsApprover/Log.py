@@ -1,7 +1,5 @@
 import logging
-import os
 from os.path import join
-
 
 # https://docs.python.org/2/howto/logging.html
 from ifsApprover import config
@@ -12,13 +10,9 @@ def get_logger(name):
     return logging.getLogger("ifs.%s" % name)
 
 
-def init_wsgi_logger():
-    _configure_logger('wsgi-ifs', "ifs")
-    _configure_logger('wsgi-web')
-
-
-def init_cli_logger():
-    _configure_logger('cli')
+def init_logger():
+    _configure_logger('ifs', "ifs")
+    _configure_logger('web')
 
 
 def _configure_logger(file_name, logger_name=None):
@@ -27,7 +21,7 @@ def _configure_logger(file_name, logger_name=None):
 
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
-    if not logger_name is None:
+    if logger_name is not None:
         logger.propagate = False
 
     file_path = join(config["LOG_DIR"], "%s.log" % file_name)

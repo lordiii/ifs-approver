@@ -5,7 +5,7 @@ import shutil
 
 from ifsApprover import db, Log, config
 from ifsApprover.Mail import send_approve_mail, send_reject_mail
-from Utils import run
+from ifsApprover.Utils import run
 
 
 RE_IFS_JPG = re.compile("^([\d]{4})\.jpg")
@@ -46,10 +46,10 @@ def create_image_preview(image_filename):
     logger.debug("run: %s" % cmd)
     out = run(cmd, "identify")
     if "," not in out:
-        raise StandardError("Error getting size of %s. (identify output: '%s')" % (image_full_path, out))
+        raise Exception("Error getting size of %s. (identify output: '%s')" % (image_full_path, out))
     image_info = out.split(",")
-    if image_info[0] is not "JPEG":
-        raise StandardError("Image was not a JPEG, but '%s'. (identify output: '%s')", (image_info[0], image_info))
+    if image_info[0] != "JPEG":
+        raise Exception("Image was not a JPEG, but '%s'. (identify output: '%s')" % (image_info[0], image_info))
 
     size_for_convert = "x".join(map(str, config["IMAGE_PREVIEW_SIZE"]))
     cmd = "%s %s -resize %s -auto-orient %s" % \
@@ -81,7 +81,7 @@ def get_image_path(image_id, type='full'):
             return None
         return image_file
     else:
-        raise StandardError("Invalid 'type' %s" % type)
+        raise Exception("Invalid 'type' %s" % type)
 
 
 def _move_image_to_approve_dir(image_filename):

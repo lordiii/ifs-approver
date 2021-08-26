@@ -1,15 +1,17 @@
 import hashlib
+import os
 import sqlite3
 import time
+from pathlib import Path
 
-import Log
+from ifsApprover import Log
 from ifsApprover.Utils import rnd_string
 
 
 logger = Log.get_logger("DB")
 
 
-class DB():
+class DB:
     STATUS_OK = 1
     STATUS_NO_IMAGE = 2
     STATUS_APPROVED = 3
@@ -18,6 +20,10 @@ class DB():
     _SYSTEM_USER = "_system_".lower()
 
     def __init__(self, filename):
+        file = Path(filename)
+        logger.info("Using db %s", file.absolute())
+        if not file.exists():
+            logger.info("Creating new database file...")
         self._connection = sqlite3.connect(filename, check_same_thread=False)
         self._connection.row_factory = sqlite3.Row
         self._cursor = self._connection.cursor()
@@ -27,7 +33,7 @@ class DB():
             self._create_table_images()
 
     def _exist_table(self, table_name):
-        self._cursor.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='%s'" % table_name)
+        self._cursor.execute(f"SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table_name}'")
         return self._cursor.fetchone()[0] == 1
 
     def _create_table_images(self):
@@ -76,7 +82,7 @@ class DB():
     def _insert_images(self, sender, description, status, filename=None, width=None, height=None, changed_by=None):
         now = int(time.time())
         data = (sender, filename, status, description, now, width, height, changed_by)
-        logger.debug("Insert new entry: %s" % str(data))
+        logger.debug(f"Insert new entry: {str(data)}")
 
         self._cursor.execute("""
         INSERT INTO images
@@ -126,9 +132,9 @@ class DB():
         else:
             user_id = self.get_user_id(user_login)
             if user_id is None:
-                raise StandardError("user login should not be None at this time.")
+                raise Exception("user login should not be None at this time.")
 
-        logger.info("Change the image id %s by user %s to %s (reason %s)" % (image_id, user_login, status, reason))
+        logger.info(f"Change the image id {image_id} by user {user_login} to {status} (reason {reason})")
         self._cursor.execute("UPDATE images SET status = :status, changed_by = :by, action_reason = :reason WHERE id = :imgId",
                              {"status": status, "by": user_id, "reason": reason, "imgId": image_id})
         self._connection.commit()
@@ -153,7 +159,7 @@ class DB():
 
     @staticmethod
     def _hash_password(plain_text, salt):
-        return hashlib.sha512(plain_text + salt).hexdigest()
+        return hashlib.sha512((plain_text + salt).encode()).hexdigest()
 
     def get_users_list(self):
         self._cursor.execute("SELECT id, login FROM users")

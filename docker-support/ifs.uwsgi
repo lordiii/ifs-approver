@@ -1,0 +1,22 @@
+[uwsgi]
+plugin          = python3
+virtualenv      = /ifs-backend/venv
+pythonpath      = /ifs-backend/venv
+
+chdir           = /ifs-backend
+wsgi-file       = /ifs-backend/cgi/ifs-approver.wsgi.py
+
+uid = ifs
+gid = ifs
+
+callable = app
+
+# process-related settings
+# master
+master          = true
+# maximum number of worker processes
+processes       = 2
+# the socket (use the full path to be safe
+socket = /tmp/ifs.socket
+chown-socket = www-data:www-data
+chmod-socket = 664
