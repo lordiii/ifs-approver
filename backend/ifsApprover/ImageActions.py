@@ -6,6 +6,7 @@ import shutil
 from ifsApprover import db, Log, config
 from ifsApprover.Mail import send_approve_mail, send_reject_mail
 from ifsApprover.Utils import run
+from ifsApprover.Automation import trigger_github_actions
 
 
 RE_IFS_JPG = re.compile("^([\d]{4})\.jpg")
@@ -20,6 +21,7 @@ def approve_image(image_id, user_login):
     _move_image_to_approve_dir(image_data["filename"])
     _run_after_approve()
     send_approve_mail(ifs_image_owner=image_data["sender"], image_filename=image_data["filename"], user_login=user_login)
+    trigger_github_actions()
 
 
 def reject_image(image_id, user_login, reason):

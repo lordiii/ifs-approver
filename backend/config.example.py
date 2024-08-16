@@ -34,3 +34,8 @@ APPROVED_AFTER_ACTION = "echo YOUR COMMAND"
 MAIL_SUPPRESS_SEND = True
 MAIL_SENDER = "ifs@your-domain"
 WEB_UI_URL = "https://your-domain-with-web-ui"
+
+# GitHub Actions
+GH_ENDPOINT = ""
+GH_TOKEN = ""
+GH_REF_BRANCH = "main"
